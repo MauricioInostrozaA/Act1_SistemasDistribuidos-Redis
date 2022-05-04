@@ -25,6 +25,8 @@ import demo_pb2_grpc
 __all__ = 'DemoServer'
 SERVER_ADDRESS = 'localhost:23333'
 SERVER_ID = 1
+busqueda = " "
+resultado=None
 
 conn = psycopg2.connect(
     host="localhost",
@@ -32,22 +34,17 @@ conn = psycopg2.connect(
     user="postgres",
     password="marihuana")
 
-def get_Item():
+def get_Item(busqueda):
     """ query data from the tiendita table """
     conn = None
     try:
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT Id, Name, Price, Count FROM Items WHERE position(Name in "+ +")>0;")
-        print(cur.rowcount)
+        cur.execute("SELECT Id, Name, Price, Count FROM Items WHERE position(Name in "+busqueda+")>0;")
         row = cur.fetchone()
-
-        while row is not None:
-            print(row)
-            row = cur.fetchone()
-
         cur.close()
+        return row
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
@@ -62,9 +59,10 @@ class DemoServer(demo_pb2_grpc.GRPCDemoServicer):
     def SimpleMethod(self, request, context):
         print("SimpleMethod called by client(%d) the message: %s" %
               (request.client_id, request.request_data))
+        resultado = get_Item(request.request.data)
         response = demo_pb2.Response(
             server_id=SERVER_ID,
-            response_data="Python server SimpleMethod Ok!!!!")
+            response_data=resultado)
         return response
 
 def main():
