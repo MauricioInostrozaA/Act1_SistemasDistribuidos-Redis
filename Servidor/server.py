@@ -32,15 +32,15 @@ conn = psycopg2.connect(
     user="postgres",
     password="marihuana")
 
-def get_vendors():
+def get_Item():
     """ query data from the tiendita table """
     conn = None
     try:
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT Id, Name, Price, Count FROM Items where")
-        print("The number of parts: ", cur.rowcount)
+        cur.execute("SELECT Id, Name, Price, Count FROM Items WHERE position(Name in "+ +")>0;")
+        print(cur.rowcount)
         row = cur.fetchone()
 
         while row is not None:
