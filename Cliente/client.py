@@ -18,12 +18,17 @@ import grpc
 
 import demo_pb2
 import demo_pb2_grpc
+import redis
+from flask import Flask, jsonify
+
 
 __all__ = 'simple_method'
 
 
 SERVER_ADDRESS = "localhost:23333"
 CLIENT_ID = 1
+
+red = redis.Redis(host='redis', port=6379, db=0)
 
 # 中文注释和英文翻译
 # Note that this example was contributed by an external user using Chinese comments.
@@ -33,12 +38,17 @@ CLIENT_ID = 1
 # 一元模式(在一次调用中, 客户端只能向服务器传输一次请求数据, 服务器也只能返回一次响应)
 # unary-unary(In a single call, the client can only send request once, and the server can
 # only respond once.)
+
 def simple_method(stub):
     print("--------------Call SimpleMethod Begin--------------")
-    request = demo_pb2.Request(client_id=CLIENT_ID,
-                               request_data="called by Python client")
-    response = stub.SimpleMethod(request)
-    print("resp from server(%d), the message=%s" %
+    item = input()
+    if red.hgetall(item).keys():
+        return jsonify({"item": item})
+
+    else:
+        request = demo_pb2.Request(client_id=CLIENT_ID, request_data=item)
+        response = stub.SimpleMethod(request)
+        print("resp from server(%d), the message=%s" %
           (response.server_id, response.response_data))
     print("--------------Call SimpleMethod Over---------------")
 
