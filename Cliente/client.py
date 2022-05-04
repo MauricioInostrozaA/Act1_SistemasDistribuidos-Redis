@@ -28,7 +28,7 @@ __all__ = 'simple_method'
 SERVER_ADDRESS = "localhost:23333"
 CLIENT_ID = 1
 
-red = redis.Redis(host='redis', port=6379, db=0)
+red = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
 # 中文注释和英文翻译
 # Note that this example was contributed by an external user using Chinese comments.
@@ -42,14 +42,17 @@ red = redis.Redis(host='redis', port=6379, db=0)
 def simple_method(stub):
     print("--------------Call SimpleMethod Begin--------------")
     item = input()
-    if red.hgetall(item).keys():
-        return jsonify({"item": item})
+    consulta = red.get(item)
+    print(consulta)
+
+    if consulta:
+        print('Se encuentra en cache')
 
     else:
         request = demo_pb2.Request(client_id=CLIENT_ID, request_data=item)
         response = stub.SimpleMethod(request)
-        print("resp from server(%d), the message=%s" %
-          (response.server_id, response.response_data))
+        while response.response_data != None:
+            print(response.response_data)
     print("--------------Call SimpleMethod Over---------------")
 
 def main():

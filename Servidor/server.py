@@ -60,6 +60,7 @@ class DemoServer(demo_pb2_grpc.GRPCDemoServicer):
         print("SimpleMethod called by client(%d) the message: %s" %
               (request.client_id, request.request_data))
         resultado = get_Item(request.request.data)
+        print(resultado)
         response = demo_pb2.Response(
             server_id=SERVER_ID,
             response_data=resultado)
