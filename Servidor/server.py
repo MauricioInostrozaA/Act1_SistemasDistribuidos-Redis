@@ -17,6 +17,7 @@ from concurrent import futures
 from threading import Thread
 
 import grpc
+import psycopg2
 
 import demo_pb2
 import demo_pb2_grpc
@@ -25,6 +26,33 @@ __all__ = 'DemoServer'
 SERVER_ADDRESS = 'localhost:23333'
 SERVER_ID = 1
 
+conn = psycopg2.connect(
+    host="localhost",
+    database="tiendita",
+    user="postgres",
+    password="marihuana")
+
+def get_vendors():
+    """ query data from the tiendita table """
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        cur.execute("SELECT Id, Name, Price, Count FROM Items where")
+        print("The number of parts: ", cur.rowcount)
+        row = cur.fetchone()
+
+        while row is not None:
+            print(row)
+            row = cur.fetchone()
+
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
 
 class DemoServer(demo_pb2_grpc.GRPCDemoServicer):
 
