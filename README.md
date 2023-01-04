@@ -1,4 +1,4 @@
-# SD_Tarea1
+# Actividad #1 para el curso Sistema Distribuidos
 Integrantes: Luis Donoso, Mauricio Inostroza
 
 ## Configuración Redis
